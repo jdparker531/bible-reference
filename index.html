@@ -595,6 +595,15 @@ function getSearchFields(b) {
   ];
 }
 function getSearchMatches(query) {
+  // Recognize a typed book-and-chapter reference, including verses not in the selected key passages.
+  const referenceQuery=String(query||'').trim().replace(/\s+/g,' ');
+  const referencedBook=B.find(b=>{
+    const prefix=b.name.toLowerCase()+' ';
+    return referenceQuery.toLowerCase().startsWith(prefix)&&/^\d{1,3}(?::\d{1,3}(?:[-–]\d{1,3})?)?$/.test(referenceQuery.slice(prefix.length));
+  });
+  if(referencedBook){
+    return [{book:referencedBook,field:{label:'Scripture reference',value:referenceQuery,weight:2000},score:2000,multi:false}];
+  }
   const q=normalizeSearch(query);
   if(!q)return [];
   const terms=q.split(' ');
