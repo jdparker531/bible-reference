@@ -110,7 +110,7 @@
 
 
 /* Full public-domain Bible verses in the book's Key Passages cards */
-.verses-box .verse-intro{margin:3px 0 12px;color:#8190a0;font-size:12px;line-height:1.5}
+
 .verses-box .verse-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
 .verses-box .verse-quotation{height:auto;min-height:126px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;gap:10px;padding:15px 16px;background:#fafcfd;border:1px solid #dce4ea;border-radius:10px;text-align:left;text-decoration:none;transition:background .15s,border-color .15s,box-shadow .15s}
 .verses-box .verse-quotation:hover{background:#f0f5f9;border-color:#a5bdcf;box-shadow:0 3px 12px rgba(26,49,69,.06)}
@@ -506,7 +506,7 @@ function formatPurpose(b){
 }
 
 function bookpage(){let b=B[state.book],s=S[b.section];let h='<button class="book-back" onclick="navigate(\'section\','+b.section+')">← Back to '+safe(s.title)+'</button><div class="book-header"><div class="book-intro"><div class="eyebrow">'+(b.testament==='OT'?'OLD TESTAMENT':'NEW TESTAMENT')+' / '+safe(s.title.toUpperCase())+'</div><h1>'+safe(b.name)+'</h1><div class="book-subline"><span>Book '+String(b.id+1).padStart(2,'0')+' of 66</span><span class="dot">·</span><span>'+safe(E[b.era].name)+'</span></div></div><button class="mutebtn" onclick="copyBookLink()">↗ Copy book link</button></div>';
-h+='<div class="details-grid"><div class="book-facts"><div class="book-fact"><div class="info-title">✎ &nbsp; Authorship</div><p class="spec-text">'+formatAuthor(b.author)+'</p></div><div class="book-fact"><div class="info-title">◷ &nbsp; Time written</div><p class="spec-text">'+formatDate(b.date)+'</p></div></div><div class="info-box purpose-box"><div class="info-title">◎ &nbsp; Purpose</div><p>'+formatPurpose(b)+'</p></div><div class="info-box verses-box"><div class="info-title">❖ &nbsp; Key Passages</div><p class="verse-intro">Recognizable and frequently memorized verses · World English Bible (WEB), public domain</p><div class="verse-list">';for(let v of b.verses)h+='<a class="verse verse-quotation" href="'+bibleUrl(b,v.ref).replace('version=ESV','version=WEB')+'" target="_blank" rel="noopener noreferrer"><strong>'+safe(b.name+' '+v.ref)+' ↗</strong><span>“'+safe(v.text)+'”</span></a>';h+='</div></div></div><div class="summarycard"><div class="eyebrow">THE BOOK IN BRIEF</div><h2>Book summary</h2><p>'+safe(b.summary)+'</p></div><div class="actions"><button class="primarybtn" onclick="openDrawer()">Explore this book in depth <span>↗</span></button><a class="secondarybtn" href="'+bibleUrl(b)+'" target="_blank" rel="noopener noreferrer">Read in Bible Gateway ↗</a></div>';
+h+='<div class="details-grid"><div class="book-facts"><div class="book-fact"><div class="info-title">✎ &nbsp; Authorship</div><p class="spec-text">'+formatAuthor(b.author)+'</p></div><div class="book-fact"><div class="info-title">◷ &nbsp; Time written</div><p class="spec-text">'+formatDate(b.date)+'</p></div></div><div class="info-box purpose-box"><div class="info-title">◎ &nbsp; Purpose</div><p>'+formatPurpose(b)+'</p></div><div class="info-box verses-box"><div class="info-title">❖ &nbsp; Key Passages</div><div class="verse-list">';for(let v of b.verses)h+='<a class="verse verse-quotation" href="'+bibleUrl(b,v.ref).replace('version=ESV','version=WEB')+'" target="_blank" rel="noopener noreferrer"><strong>'+safe(b.name+' '+v.ref)+' ↗</strong><span>“'+safe(v.text)+'”</span></a>';h+='</div></div></div><div class="summarycard"><div class="eyebrow">THE BOOK IN BRIEF</div><h2>Book summary</h2><p>'+safe(b.summary)+'</p></div><div class="actions"><button class="primarybtn" onclick="openDrawer()">Explore this book in depth <span>↗</span></button><a class="secondarybtn" href="'+bibleUrl(b)+'" target="_blank" rel="noopener noreferrer">Read in Bible Gateway ↗</a></div>';
 let prev=B[b.id-1],next=B[b.id+1];h+='<div class="pager"><div>'+(prev?'<button onclick="navigate(\'book\','+prev.id+')"><small>← Previous book</small>'+safe(prev.name)+'</button>':'')+'</div><div>'+(next?'<button class="next" onclick="navigate(\'book\','+next.id+')"><small>Next book →</small>'+safe(next.name)+'</button>':'')+'</div></div>';return h}
 function svgMap(b){let names=b.places,p=names.map(n=>({name:n,ll:LOC[n]}));let X=lon=>22+(lon-10)*15.3,Y=lat=>22+(44-lat)*16.6;let marks=p.map((v,i)=>{let x=X(v.ll[0]),y=Y(v.ll[1]);let anchor=x>540?'end':'start';let dx=x>540?-9:9;return '<g><circle cx="'+x+'" cy="'+y+'" r="5" fill="#a87542" stroke="white" stroke-width="2"/><text x="'+(x+dx)+'" y="'+(y-10-(i%2)*2)+'" fill="#435c6b" text-anchor="'+anchor+'" font-size="13" font-weight="700">'+safe(v.name)+'</text></g>'}).join('');let path=p.length>1?'<polyline points="'+p.map(v=>X(v.ll[0])+','+Y(v.ll[1])).join(' ')+'" fill="none" stroke="#bf9a73" stroke-width="2" stroke-dasharray="5 7" opacity=".6"/>':'';let grids='';for(let i=1;i<5;i++){grids+='<line x1="'+(i*125)+'" y1="10" x2="'+(i*125)+'" y2="260" stroke="#dce8e8" stroke-width="1"/>';grids+='<line x1="10" y1="'+(i*51)+'" x2="680" y2="'+(i*51)+'" stroke="#dce8e8" stroke-width="1"/>'}
 return '<div class="location-graphic"><svg viewBox="0 0 690 290" role="img" aria-label="Schematic positions of '+safe(names.join(', '))+'"><rect x="0" y="0" width="690" height="290" rx="12" fill="#eff4f3"/>'+grids+'<text x="32" y="265" fill="#becdca" font-size="16" font-family="Georgia,serif" font-style="italic">West ←</text><text x="565" y="265" fill="#becdca" font-size="16" font-family="Georgia,serif" font-style="italic">→ East</text>'+path+marks+'</svg><div class="local-caption">Schematic orientation only · not to scale · locations are contextual, not a verified itinerary</div></div>'}
@@ -716,7 +716,7 @@ function geographyRedesign(panel,b){
   '<p class="desc">A real modern basemap with markers for biblical locations. Some names represent wider ancient regions; their pins are approximate.</p>'+
   '<div id="book-geography-map" class="bible-real-map" aria-label="Geographical map for '+safe(b.name)+'"><div class="bible-map-loading">Loading geographical map…</div></div>'+
   '<div class="bible-map-pills">'+pts.map(p=>'<button class="bible-map-pill" type="button">'+safe(p.name)+' ↗</button>').join('')+'</div>'+
-  '<p class="bible-map-caption">Base map © OpenStreetMap contributors. Modern borders and names are not historical reconstructions.</p>'+
+  ''+
   '<div class="bible-atlas-links"><a href="'+atlas+'" target="_blank" rel="noopener noreferrer">Historical atlas: '+safe(mapCaptions[mapNo]||"Biblical lands")+' ↗</a><a href="https://open.bible/resources" target="_blank" rel="noopener noreferrer">Browse licensed Bible maps ↗</a></div>';
  setTimeout(()=>setupMap(b,pts),60);
 }
@@ -850,6 +850,9 @@ openDrawer=function(){
  if(!panel||!b)return;
  replaceHistoricalPanel(panel,b);
  decorateVideos(panel);
+ // Remove explanatory subnotes after all existing drawer enrichments have run.
+ // Leave substantive authorship data, source links, and map tile attribution intact.
+ panel.querySelectorAll('p.desc, p.footnote, p.bible-map-caption').forEach(note=>note.remove());
 };
 })();
 </script>
