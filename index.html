@@ -190,6 +190,18 @@
 .history-written span{font:800 10px/1.4 Arial,sans-serif;letter-spacing:1px;color:#987348}
 .history-written strong{font:700 14px/1.5 Arial,sans-serif;color:#223c54}
 .history-written+.history-columns{margin-top:0}
+
+/* English-language OpenFreeMap rendering and collision-free biblical callouts */
+.bible-real-map .maplibregl-map{font-family:Arial,sans-serif}
+.bible-real-map .maplibregl-ctrl-attrib{font-size:10px}
+.bible-map-dot{width:17px;height:17px;padding:0;border:2px solid #fff;border-radius:50%;background:#9b6736;box-shadow:0 1px 5px #273e5a66;cursor:pointer}
+.bible-map-dot:focus-visible{outline:3px solid #275c84;outline-offset:3px}
+.bible-english-label-layer{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden}
+.bible-english-place-label{position:absolute;left:0;top:0;display:block;max-width:180px;background:#fff;color:#263f54;border:1px solid #c4d1d9;border-radius:5px;padding:5px 8px;white-space:nowrap;font:700 12px/1.25 Arial,sans-serif;box-shadow:0 2px 7px #21374b30;pointer-events:none}
+.bible-map-unavailable{height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;padding:20px;color:#516579;font-size:13px;text-align:center}
+.bible-map-unavailable-places{display:flex;justify-content:center;flex-wrap:wrap;gap:7px}
+.bible-map-unavailable-place{font-weight:700;font-size:12px;background:#fff;border:1px solid #dae3e9;padding:6px 9px;border-radius:6px}
+
 </style>
 <style>/* Five-era historical overview & expanded book outlines */
 .era-timeline .timeline-top{padding-bottom:15px}.timeline-subtitle{color:#8596a6;font-size:12px;margin:4px 0 0}.five-timeline-track{display:grid;grid-template-columns:repeat(5, minmax(205px,1fr));gap:8px;min-width:1060px;align-items:stretch}.epoch{min-width:0;position:relative}.epoch-marker{height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}.epoch-symbol{height:39px;width:39px;border-radius:50%;display:grid;place-items:center;background:#f6efe6;color:#8d6741;border:1px solid #e4d1b6;font:normal 23px Georgia,serif}.epoch.nt .epoch-symbol{color:#37678d;background:#eaf2f8;border-color:#cbddea}.epoch-date{font-size:11px;font-weight:800;color:#50657a;white-space:nowrap}.epoch-rail{height:4px;background:#bda282;position:relative;margin-bottom:19px}.epoch.nt .epoch-rail{background:#709abb}.epoch-rail:before{content:'';position:absolute;top:-5px;left:calc(50% - 7px);width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #b28a5d}.epoch.nt .epoch-rail:before{border-color:#608db3}.epoch-card{background:#f9fbfc;border:1px solid #e6ebef;border-radius:12px;padding:16px 13px;min-height:235px}.epoch-step{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#a08766}.epoch.nt .epoch-step{color:#6189a9}.epoch-card h4{font:normal 19px/1.2 Georgia,serif;color:#223a50;margin:9px 0 8px;min-height:46px}.epoch-card p{color:#81909e;font-size:11px;line-height:1.45;min-height:46px;margin:0 0 13px}.epoch-card .era-chip{font-size:11px;min-height:28px;padding:5px 8px}.epoch-card .era-books{gap:5px}.timeline-more{font-size:11px;margin-top:5px;color:#477195}.timeline-more summary{cursor:pointer;display:block;font-weight:800;background:#edf3f8;padding:7px 9px;border-radius:6px;list-style:none}.timeline-more summary::-webkit-details-marker{display:none}.timeline-more summary:hover{background:#e1edf5}.era-more-books{display:flex;flex-direction:column;gap:5px;margin-top:7px}.timeline-note{line-height:1.6;padding-top:4px}
@@ -673,51 +685,142 @@ function mapLocations(b){
  return b.places.map(name=>({name,lat:LOC[name]?.[1],lng:LOC[name]?.[0]})).filter(x=>Number.isFinite(x.lat)&&Number.isFinite(x.lng));
 }
 function bboxFor(points){const lat=points.map(p=>p.lat),lng=points.map(p=>p.lng);const lo=Math.min(...lat),hi=Math.max(...lat),left=Math.min(...lng),right=Math.max(...lng);const padLat=Math.max(1.6,(hi-lo)*.35),padLng=Math.max(2.2,(right-left)*.35);return [left-padLng,lo-padLat,right+padLng,hi+padLat];}
-function fallbackMap(container,pts){
- if(!container||!pts.length)return;
- const [left,bottom,right,top]=bboxFor(pts);const p=pts[0];
- const url="https://www.openstreetmap.org/export/embed.html?bbox="+encodeURIComponent([left,bottom,right,top].join(","))+"&layer=mapnik&marker="+encodeURIComponent(p.lat+","+p.lng);
- container.innerHTML='<iframe class="bible-map-fallback" src="'+url+'" loading="lazy" title="OpenStreetMap showing '+safe(p.name)+'" referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+
+function fallbackMap(elem,pts){
+ if(!elem)return;
+ const names=pts.map(p=>'<span class="bible-map-unavailable-place">'+safe(p.name)+'</span>').join('');
+ elem.innerHTML='<div class="bible-map-unavailable">Map could not load. English place names remain below.'+(names?'<div class="bible-map-unavailable-places">'+names+'</div>':'')+'</div>';
 }
-function loadLeaflet(){
- if(window.L?.map)return Promise.resolve(window.L);
+function loadMapLibre(){
+ if(window.maplibregl?.Map)return Promise.resolve(window.maplibregl);
  if(mapLibraryPromise)return mapLibraryPromise;
  mapLibraryPromise=new Promise((resolve,reject)=>{
-   if(!document.querySelector('link[data-bible-leaflet]')){
-     const link=document.createElement("link");link.rel="stylesheet";link.dataset.bibleLeaflet="yes";link.href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";document.head.appendChild(link);
+   if(!document.querySelector('link[data-bible-maplibre]')){
+     const link=document.createElement('link');
+     link.rel='stylesheet';
+     link.href='https://unpkg.com/maplibre-gl@5.3.0/dist/maplibre-gl.css';
+     link.dataset.bibleMaplibre='yes';
+     document.head.appendChild(link);
    }
-   const s=document.createElement("script");
-   s.src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";s.async=true;s.onload=()=>window.L?.map?resolve(window.L):reject(new Error("Leaflet not ready"));s.onerror=()=>reject(new Error("Map library blocked"));document.head.appendChild(s);
+   const el=document.createElement('script');
+   el.src='https://unpkg.com/maplibre-gl@5.3.0/dist/maplibre-gl.js';
+   el.async=true;
+   el.onload=()=>window.maplibregl?.Map?resolve(window.maplibregl):reject(new Error('MapLibre unavailable'));
+   el.onerror=()=>reject(new Error('MapLibre failed to load'));
+   document.head.appendChild(el);
  }).catch(e=>{mapLibraryPromise=null;throw e;});
  return mapLibraryPromise;
 }
+function useEnglishMapLabels(map){
+ const en=['coalesce',['get','name:en'],['get','name:latin'],['get','name_int'],['get','name:en-Latn']];
+ for(const layer of map.getStyle()?.layers||[]){
+   if(layer.type!=='symbol'||!layer.layout?.['text-field'])continue;
+   if(!/name/.test(JSON.stringify(layer.layout['text-field']).toLowerCase()))continue;
+   try{map.setLayoutProperty(layer.id,'text-field',en);}catch(e){}
+ }
+}
 function setupMap(b,pts){
- const elem=document.getElementById("book-geography-map");
- if(!elem||!pts.length)return;
- const sameBook=b.id;
- const pillButtons=[...document.querySelectorAll(".bible-map-pill")];
- loadLeaflet().then(L=>{
-   if(!document.getElementById("book-geography-map")||state.book!==sameBook||!document.getElementById("overlay").classList.contains("open"))return;
+ const elem=document.getElementById('book-geography-map');
+ if(!elem)return;
+ const bookId=b.id,pills=[...document.querySelectorAll('.bible-map-pill')];
+ loadMapLibre().then(GL=>{
+   if(document.getElementById('book-geography-map')!==elem||state.book!==bookId||!document.getElementById('overlay').classList.contains('open'))return;
    if(activeMap){activeMap.remove();activeMap=null;}
-   elem.innerHTML="";
-   const map=L.map(elem,{scrollWheelZoom:false,minZoom:2,maxZoom:15,zoomControl:true});
-   activeMap=map;
-   L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{
-       maxZoom:15,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>'
-   }).addTo(map);
-   const marks=[];
-   pts.forEach(p=>{
-     const m=L.circleMarker([p.lat,p.lng],{radius:8,color:"#fff",weight:2,fillColor:"#9b6736",fillOpacity:1}).addTo(map);
-     m.bindTooltip(p.name,{permanent:true,direction:"top",offset:[0,-7],className:"bible-place-tooltip"});
-     m.bindPopup('<strong>'+safe(p.name)+'</strong><br>Location associated with '+safe(b.name));
-     marks.push(m);
+   elem.innerHTML='';
+   const map=new GL.Map({
+     container:elem,
+     style:'https://tiles.openfreemap.org/styles/positron',
+     center:pts.length?[pts[0].lng,pts[0].lat]:[35,32],
+     zoom:pts.length===1?7:4,minZoom:2,maxZoom:15,
+     dragRotate:false,pitchWithRotate:false,attributionControl:true
    });
-   if(pts.length===1)map.setView([pts[0].lat,pts[0].lng],7);
-   else map.fitBounds(L.latLngBounds(pts.map(p=>[p.lat,p.lng])),{padding:[65,55],maxZoom:7});
-   pillButtons.forEach((btn,i)=>btn.addEventListener("click",()=>{if(!activeMap||state.book!==sameBook)return;map.setView([pts[i].lat,pts[i].lng],Math.max(map.getZoom(),7),{animate:true});marks[i].openPopup();}));
-   setTimeout(()=>map.invalidateSize(),160);
+   activeMap=map;
+   map.addControl(new GL.NavigationControl({showCompass:false}),'top-left');
+   let labelsLayer=null,scheduled=false;
+   const markerPoints=pts.map(p=>[p.lng,p.lat]), labels=[];
+   const collide=(a,b,gap=4)=>a.left<b.right+gap&&a.right>b.left-gap&&a.top<b.bottom+gap&&a.bottom>b.top-gap;
+   function layout(){
+     if(!labelsLayer||activeMap!==map)return;
+     const width=elem.clientWidth,height=elem.clientHeight;
+     if(!width||!height)return;
+     const projected=markerPoints.map(pos=>map.project(pos));
+     const pins=projected.map(p=>({left:p.x-10,right:p.x+10,top:p.y-10,bottom:p.y+10}));
+     const chosen=[];
+     labels.forEach((label,i)=>{
+       label.style.display='block';
+       label.style.visibility='hidden';
+       const w=label.offsetWidth,h=label.offsetHeight;
+       label.style.display='none';
+       label.style.visibility='';
+       const pt=projected[i];
+       if(!pt||pt.x<0||pt.y<0||pt.x>width||pt.y>height)return;
+       const attempts=[
+         [pt.x-w/2,pt.y-h-19],
+         [pt.x+16,pt.y-h-10],
+         [pt.x-w-16,pt.y-h-10],
+         [pt.x-w/2,pt.y+18],
+         [pt.x+16,pt.y+9],
+         [pt.x-w-16,pt.y+9],
+         [pt.x+17,pt.y-h/2],
+         [pt.x-w-17,pt.y-h/2]
+       ];
+       for(const [x,y] of attempts){
+         const box={left:x,top:y,right:x+w,bottom:y+h};
+         if(x<6||y<7||box.right>width-6||box.bottom>height-22)continue;
+         if(collide(box,{left:0,top:0,right:56,bottom:100},6))continue;
+         if(collide(box,{left:width-220,top:height-30,right:width,bottom:height},3))continue;
+         if(chosen.some(other=>collide(box,other,6)))continue;
+         if(pins.some((obstacle,j)=>j!==i&&collide(box,obstacle,3)))continue;
+         label.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
+         label.style.display='block';
+         chosen.push(box);
+         break;
+       }
+     });
+   }
+   function updateLabels(){
+     if(scheduled)return;
+     scheduled=true;
+     requestAnimationFrame(()=>{scheduled=false;layout();});
+   }
+   map.on('load',()=>{
+     useEnglishMapLabels(map);
+     labelsLayer=document.createElement('div');
+     labelsLayer.className='bible-english-label-layer';
+     elem.appendChild(labelsLayer);
+     pts.forEach((p,i)=>{
+       const pin=document.createElement('button');
+       pin.type='button';
+       pin.className='bible-map-dot';
+       pin.title=p.name;
+       pin.setAttribute('aria-label','Show '+p.name+' on map');
+       const marker=new GL.Marker({element:pin,anchor:'center'}).setLngLat(markerPoints[i])
+         .setPopup(new GL.Popup({offset:15,closeButton:false}).setText(p.name)).addTo(map);
+       const text=document.createElement('span');
+       text.className='bible-english-place-label';
+       text.textContent=p.name;
+       labelsLayer.appendChild(text);
+       labels.push(text);
+       if(pills[i])pills[i].addEventListener('click',()=>{
+         if(activeMap!==map||state.book!==bookId)return;
+         map.easeTo({center:markerPoints[i],zoom:Math.max(map.getZoom(),8),duration:400});
+         marker.togglePopup();
+       });
+     });
+     if(pts.length===1)map.jumpTo({center:markerPoints[0],zoom:7});
+     else if(pts.length>1){
+       const bounds=new GL.LngLatBounds();
+       markerPoints.forEach(p=>bounds.extend(p));
+       map.fitBounds(bounds,{padding:{top:75,right:65,bottom:70,left:65},maxZoom:7,duration:0});
+     }else map.jumpTo({center:[35,32],zoom:5});
+     map.on('move',updateLabels);
+     map.on('resize',updateLabels);
+     map.on('idle',updateLabels);
+     setTimeout(()=>{if(activeMap===map){map.resize();updateLabels();}},200);
+   });
  }).catch(()=>fallbackMap(elem,pts));
 }
+
 function geographyRedesign(panel,b){
  const sec=[...panel.querySelectorAll(":scope > .drawer-section")].find(el=>el.querySelector(".eyebrow")?.textContent.includes("GEOGRAPHY"));
  if(!sec)return;
