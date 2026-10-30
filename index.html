@@ -906,7 +906,7 @@ function replaceHistoricalPanel(panel,b){
  const sec=[...panel.querySelectorAll(':scope > .drawer-section')].find(s=>s.querySelector('.eyebrow')?.textContent.includes('HISTORICAL CONTEXT'));
  if(!sec)return;
  const selected=highlighted(b);
- sec.innerHTML='<div class="eyebrow">HISTORICAL CONTEXT</div><h3>The Bible through history</h3>'+
+ sec.innerHTML='<div class="eyebrow">HISTORICAL CONTEXT</div><h3>'+safe(b.name)+'</h3>'+
   '<div class="history-written"><span>TIME WRITTEN</span><strong>'+safe(b.date)+'</strong></div>'+
   '<div class="history-columns">'+chronologyTable("Old Testament",ot,1,selected)+chronologyTable("New Testament",nt,10,selected)+'</div>';
 }
