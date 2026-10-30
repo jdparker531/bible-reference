@@ -153,6 +153,37 @@
 @media(max-width:700px){.history-columns{grid-template-columns:1fr}.history-column-title{padding:13px}.history-item .history-name{font-size:13px}.history-item .history-years{font-size:11px}}
 @media(max-width:420px){.history-table-headers,.history-item{grid-template-columns:25px minmax(0,1fr) minmax(85px,auto);gap:5px}}
 
+
+/* Clickable literary outline and book-specific historical timelines */
+.trad-outline li{display:block;padding:0}
+.trad-outline .trad-row-link{display:grid;grid-template-columns:55px minmax(0,1fr) auto;gap:13px;align-items:center;padding:14px 16px;color:inherit;text-decoration:none;min-width:0}
+.trad-outline .trad-row-link:hover{background:#edf4f9;text-decoration:none}
+.trad-outline .trad-row-link:focus-visible{outline:3px solid #2d6a92;outline-offset:-3px;background:#edf4f9}
+.trad-outline .trad-row-link:hover .trad-text{color:#1f5a85;text-decoration:underline}
+.trad-outline .trad-range{white-space:nowrap}
+.book-history-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:18px 0 22px}
+.book-history-fact{padding:17px 18px;background:#f4f7f9;border:1px solid #dce4ea;border-radius:10px;min-width:0}
+.book-history-label{font:700 10px/1.4 Arial,sans-serif;letter-spacing:1px;color:#997348;margin-bottom:9px}
+.book-history-fact strong{display:block;font:700 15px/1.45 Arial,sans-serif;color:#263b51;overflow-wrap:break-word}
+.book-history-fact span{display:block;color:#728393;font-size:12px;line-height:1.55;margin-top:5px}
+.book-history-heading{border-bottom:2px solid #233e55;padding-bottom:10px;margin-bottom:2px;color:#27445d;font:800 11px/1.5 Arial,sans-serif;letter-spacing:.09em}
+.book-history-steps{list-style:none;margin:0;padding:4px 0 0 15px;position:relative}
+.book-history-steps:before{content:"";position:absolute;left:34px;top:19px;bottom:27px;width:2px;background:#c4d1db}
+.book-history-step{position:relative;display:flex;gap:16px;align-items:flex-start;padding:14px 0;border-bottom:1px solid #e3e9ee}
+.book-history-step:last-child{border-bottom:0}
+.book-history-dot{position:relative;z-index:1;width:39px;height:39px;flex:0 0 39px;border-radius:50%;border:2px solid #7b9ab1;background:white;color:#2c506b;display:grid;place-items:center;font:700 11px Arial,sans-serif}
+.book-history-step-body{padding-top:2px;min-width:0}
+.book-history-step-body strong{display:block;font:700 14px/1.45 Arial,sans-serif;color:#23384e}
+.book-history-step-body small{display:block;font:700 11px/1.4 Arial,sans-serif;color:#987349;margin-top:5px}
+@media(max-width:650px){
+ .book-history-facts{grid-template-columns:1fr;gap:9px}
+ .book-history-fact{padding:13px 14px}
+ .trad-outline .trad-row-link{grid-template-columns:36px minmax(0,1fr);gap:8px;padding:13px 12px}
+ .trad-outline .trad-range{grid-column:2;justify-self:start;white-space:normal}
+ .book-history-steps{padding-left:4px}
+ .book-history-steps:before{left:23px}
+}
+
 </style>
 <style>/* Five-era historical overview & expanded book outlines */
 .era-timeline .timeline-top{padding-bottom:15px}.timeline-subtitle{color:#8596a6;font-size:12px;margin:4px 0 0}.five-timeline-track{display:grid;grid-template-columns:repeat(5, minmax(205px,1fr));gap:8px;min-width:1060px;align-items:stretch}.epoch{min-width:0;position:relative}.epoch-marker{height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}.epoch-symbol{height:39px;width:39px;border-radius:50%;display:grid;place-items:center;background:#f6efe6;color:#8d6741;border:1px solid #e4d1b6;font:normal 23px Georgia,serif}.epoch.nt .epoch-symbol{color:#37678d;background:#eaf2f8;border-color:#cbddea}.epoch-date{font-size:11px;font-weight:800;color:#50657a;white-space:nowrap}.epoch-rail{height:4px;background:#bda282;position:relative;margin-bottom:19px}.epoch.nt .epoch-rail{background:#709abb}.epoch-rail:before{content:'';position:absolute;top:-5px;left:calc(50% - 7px);width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #b28a5d}.epoch.nt .epoch-rail:before{border-color:#608db3}.epoch-card{background:#f9fbfc;border:1px solid #e6ebef;border-radius:12px;padding:16px 13px;min-height:235px}.epoch-step{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#a08766}.epoch.nt .epoch-step{color:#6189a9}.epoch-card h4{font:normal 19px/1.2 Georgia,serif;color:#223a50;margin:9px 0 8px;min-height:46px}.epoch-card p{color:#81909e;font-size:11px;line-height:1.45;min-height:46px;margin:0 0 13px}.epoch-card .era-chip{font-size:11px;min-height:28px;padding:5px 8px}.epoch-card .era-books{gap:5px}.timeline-more{font-size:11px;margin-top:5px;color:#477195}.timeline-more summary{cursor:pointer;display:block;font-weight:800;background:#edf3f8;padding:7px 9px;border-radius:6px;list-style:none}.timeline-more summary::-webkit-details-marker{display:none}.timeline-more summary:hover{background:#e1edf5}.era-more-books{display:flex;flex-direction:column;gap:5px;margin-top:7px}.timeline-note{line-height:1.6;padding-top:4px}
@@ -594,13 +625,26 @@ function roman(n){const nums=[[10,"X"],[9,"IX"],[5,"V"],[4,"IV"],[1,"I"]];let s=
 function outlineRedesign(panel){
  const sec=[...panel.querySelectorAll(":scope > .drawer-section")].find(el=>el.querySelector(".eyebrow")?.textContent.includes("LITERARY STRUCTURE"));
  if(!sec)return;
+ const b=B[state.book];
  const original=[...sec.querySelectorAll(".outline-item")].map(el=>({
-  text:el.querySelector(".outline-description")?.textContent?.trim()||el.innerText.trim(),
-  range:el.querySelector(".outline-range")?.textContent?.trim()||""
+   text:el.querySelector(".outline-description")?.textContent?.trim()||el.innerText.trim(),
+   range:el.querySelector(".outline-range")?.textContent?.trim()||""
  }));
+ function beginning(text,range){
+   const source=range||text.match(/Psalms\s+(\d+(?:[–-]\d+)?)/i)?.[1]||"";
+   const match=source.match(/^(\d+)(?::(\d+))?/);
+   if(!match)return "1";
+   return match[1]+(match[2]?":"+match[2]:"");
+ }
  const list=document.createElement("div");
- list.innerHTML='<div class="reading-outline-head"><strong>Literary divisions</strong><span>'+original.length+' sections</span></div><ol class="trad-outline">'+original.map((item,i)=>'<li><span class="trad-roman">'+roman(i+1)+'.</span><span class="trad-text">'+safe(item.text)+'</span>'+(item.range?'<span class="trad-range">CH. '+safe(item.range)+'</span>':'')+'</li>').join('')+'</ol>';
- sec.querySelector(".desc").textContent="The complete chapter-by-chapter structure, grouped into major reading divisions.";
+ list.innerHTML='<div class="reading-outline-head"><strong>Literary divisions</strong><span>'+original.length+' sections</span></div>'+
+   '<ol class="trad-outline">'+original.map((item,i)=>{
+     const first=beginning(item.text,item.range);
+     const url=bibleUrl(b,first);
+     const ref=item.range||item.text.match(/Psalms\s+(\d+(?:[–-]\d+)?)/i)?.[1]||first;
+     return '<li><a class="trad-row-link" href="'+url+'" target="_blank" rel="noopener noreferrer" title="Read '+safe(b.name)+' '+safe(first)+' in Bible Gateway"><span class="trad-roman">'+roman(i+1)+'.</span><span class="trad-text">'+safe(item.text)+'</span><span class="trad-range">CH. '+safe(ref)+' ↗</span></a></li>';
+   }).join('')+'</ol>';
+ sec.querySelector(".desc").textContent="Select any division to read from its opening chapter in Bible Gateway.";
  sec.querySelector(".outline")?.replaceWith(list);
 }
 function timePosition(era){return [0.04,0.13,0.19,0.25,0.36,0.50,0.60,0.75,0.82,0.88,0.94,0.99][era]??0.5;}
@@ -744,10 +788,25 @@ function chronologyTable(label,items,start,active){
  return '<div class="history-column"><div class="history-column-title"><strong>'+label+'</strong><span>'+items.length+' eras</span></div>'+rowHeaders+'<ol class="history-list">'+rows+'</ol></div>';
 }
 function replaceHistoricalPanel(panel,b){
- const sec=[...panel.querySelectorAll(':scope > .drawer-section')].find(s=>s.querySelector('.eyebrow')?.textContent.includes('HISTORICAL CONTEXT'));
+ const sec=[...panel.querySelectorAll(":scope > .drawer-section")].find(s=>s.querySelector(".eyebrow")?.textContent.includes("HISTORICAL CONTEXT"));
  if(!sec)return;
- const selected=highlighted(b);
- sec.innerHTML='<div class="eyebrow">HISTORICAL CONTEXT</div><h3>The Bible through history</h3><div class="history-columns">'+chronologyTable("Old Testament",ot,1,selected)+chronologyTable("New Testament",nt,10,selected)+'</div>';
+ const era=E[b.era];
+ const root=panel.querySelector(".trad-outline");
+ const items=[...(root?.querySelectorAll("li")||[])].map(el=>({
+   title:el.querySelector(".trad-text")?.textContent?.trim()||"",
+   range:(el.querySelector(".trad-range")?.textContent||"").replace(/^CH\.\s*/,"").replace(/\s*↗\s*$/,"").trim()
+ })).filter(x=>x.title);
+ const count=Math.min(5,items.length);
+ const indices=[...new Set(Array.from({length:count},(_,i)=>count===1?0:Math.round((items.length-1)*i/(count-1))))];
+ const progression=indices.map((n,i)=>{
+   const item=items[n];
+   return '<li class="book-history-step"><span class="book-history-dot" aria-hidden="true">'+String(i+1).padStart(2,"0")+'</span><div class="book-history-step-body"><strong>'+safe(item.title)+'</strong><small>'+safe(item.range?("Ch. "+item.range):("Part "+(n+1)))+'</small></div></li>';
+ }).join("");
+ sec.innerHTML='<div class="eyebrow">HISTORICAL CONTEXT</div><h3>'+safe(b.name)+' — Historical Timeline</h3>'+
+ '<div class="book-history-facts"><div class="book-history-fact"><div class="book-history-label">HISTORICAL SETTING</div><strong>'+safe(era.name)+'</strong><span>'+safe(era.date)+'</span></div>'+
+ '<div class="book-history-fact"><div class="book-history-label">TIME WRITTEN</div><strong>'+safe(b.date)+'</strong></div></div>'+
+ '<div class="book-history-heading">MAJOR MOVEMENTS IN '+safe(b.name.toUpperCase())+'</div>'+
+ '<ol class="book-history-steps">'+progression+'</ol>';
 }
 function decorateVideos(panel){
  const section=[...panel.querySelectorAll(':scope > .drawer-section')].find(s=>s.querySelector('.eyebrow')?.textContent.includes('WATCH & STUDY'));
