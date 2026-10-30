@@ -184,6 +184,12 @@
  .book-history-steps:before{left:23px}
 }
 
+
+/* Book-specific composition date above restored two-column biblical era timeline */
+.history-written{display:flex;align-items:baseline;gap:13px;flex-wrap:wrap;margin:14px 0 16px;padding:13px 16px;background:#f4f7f9;border:1px solid #dce4ea;border-radius:10px}
+.history-written span{font:800 10px/1.4 Arial,sans-serif;letter-spacing:1px;color:#987348}
+.history-written strong{font:700 14px/1.5 Arial,sans-serif;color:#223c54}
+.history-written+.history-columns{margin-top:0}
 </style>
 <style>/* Five-era historical overview & expanded book outlines */
 .era-timeline .timeline-top{padding-bottom:15px}.timeline-subtitle{color:#8596a6;font-size:12px;margin:4px 0 0}.five-timeline-track{display:grid;grid-template-columns:repeat(5, minmax(205px,1fr));gap:8px;min-width:1060px;align-items:stretch}.epoch{min-width:0;position:relative}.epoch-marker{height:78px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}.epoch-symbol{height:39px;width:39px;border-radius:50%;display:grid;place-items:center;background:#f6efe6;color:#8d6741;border:1px solid #e4d1b6;font:normal 23px Georgia,serif}.epoch.nt .epoch-symbol{color:#37678d;background:#eaf2f8;border-color:#cbddea}.epoch-date{font-size:11px;font-weight:800;color:#50657a;white-space:nowrap}.epoch-rail{height:4px;background:#bda282;position:relative;margin-bottom:19px}.epoch.nt .epoch-rail{background:#709abb}.epoch-rail:before{content:'';position:absolute;top:-5px;left:calc(50% - 7px);width:14px;height:14px;border-radius:50%;background:#fff;border:3px solid #b28a5d}.epoch.nt .epoch-rail:before{border-color:#608db3}.epoch-card{background:#f9fbfc;border:1px solid #e6ebef;border-radius:12px;padding:16px 13px;min-height:235px}.epoch-step{font-size:10px;font-weight:800;letter-spacing:1.6px;color:#a08766}.epoch.nt .epoch-step{color:#6189a9}.epoch-card h4{font:normal 19px/1.2 Georgia,serif;color:#223a50;margin:9px 0 8px;min-height:46px}.epoch-card p{color:#81909e;font-size:11px;line-height:1.45;min-height:46px;margin:0 0 13px}.epoch-card .era-chip{font-size:11px;min-height:28px;padding:5px 8px}.epoch-card .era-books{gap:5px}.timeline-more{font-size:11px;margin-top:5px;color:#477195}.timeline-more summary{cursor:pointer;display:block;font-weight:800;background:#edf3f8;padding:7px 9px;border-radius:6px;list-style:none}.timeline-more summary::-webkit-details-marker{display:none}.timeline-more summary:hover{background:#e1edf5}.era-more-books{display:flex;flex-direction:column;gap:5px;margin-top:7px}.timeline-note{line-height:1.6;padding-top:4px}
@@ -788,25 +794,12 @@ function chronologyTable(label,items,start,active){
  return '<div class="history-column"><div class="history-column-title"><strong>'+label+'</strong><span>'+items.length+' eras</span></div>'+rowHeaders+'<ol class="history-list">'+rows+'</ol></div>';
 }
 function replaceHistoricalPanel(panel,b){
- const sec=[...panel.querySelectorAll(":scope > .drawer-section")].find(s=>s.querySelector(".eyebrow")?.textContent.includes("HISTORICAL CONTEXT"));
+ const sec=[...panel.querySelectorAll(':scope > .drawer-section')].find(s=>s.querySelector('.eyebrow')?.textContent.includes('HISTORICAL CONTEXT'));
  if(!sec)return;
- const era=E[b.era];
- const root=panel.querySelector(".trad-outline");
- const items=[...(root?.querySelectorAll("li")||[])].map(el=>({
-   title:el.querySelector(".trad-text")?.textContent?.trim()||"",
-   range:(el.querySelector(".trad-range")?.textContent||"").replace(/^CH\.\s*/,"").replace(/\s*↗\s*$/,"").trim()
- })).filter(x=>x.title);
- const count=Math.min(5,items.length);
- const indices=[...new Set(Array.from({length:count},(_,i)=>count===1?0:Math.round((items.length-1)*i/(count-1))))];
- const progression=indices.map((n,i)=>{
-   const item=items[n];
-   return '<li class="book-history-step"><span class="book-history-dot" aria-hidden="true">'+String(i+1).padStart(2,"0")+'</span><div class="book-history-step-body"><strong>'+safe(item.title)+'</strong><small>'+safe(item.range?("Ch. "+item.range):("Part "+(n+1)))+'</small></div></li>';
- }).join("");
- sec.innerHTML='<div class="eyebrow">HISTORICAL CONTEXT</div><h3>'+safe(b.name)+' — Historical Timeline</h3>'+
- '<div class="book-history-facts"><div class="book-history-fact"><div class="book-history-label">HISTORICAL SETTING</div><strong>'+safe(era.name)+'</strong><span>'+safe(era.date)+'</span></div>'+
- '<div class="book-history-fact"><div class="book-history-label">TIME WRITTEN</div><strong>'+safe(b.date)+'</strong></div></div>'+
- '<div class="book-history-heading">MAJOR MOVEMENTS IN '+safe(b.name.toUpperCase())+'</div>'+
- '<ol class="book-history-steps">'+progression+'</ol>';
+ const selected=highlighted(b);
+ sec.innerHTML='<div class="eyebrow">HISTORICAL CONTEXT</div><h3>The Bible through history</h3>'+
+  '<div class="history-written"><span>TIME WRITTEN</span><strong>'+safe(b.date)+'</strong></div>'+
+  '<div class="history-columns">'+chronologyTable("Old Testament",ot,1,selected)+chronologyTable("New Testament",nt,10,selected)+'</div>';
 }
 function decorateVideos(panel){
  const section=[...panel.querySelectorAll(':scope > .drawer-section')].find(s=>s.querySelector('.eyebrow')?.textContent.includes('WATCH & STUDY'));
