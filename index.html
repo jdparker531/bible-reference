@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#f7f8fa"><meta name="description" content="Bible Overview: interactive guide to 66 books of the Bible">
+<meta name="theme-color" content="#F5F4F0"><meta name="description" content="Bible Overview: interactive guide to 66 books of the Bible">
 <title>Bible Overview — An interactive guide to the Bible</title>
 <style>
 :root{--ink:#1e2934;--muted:#667487;--soft:#8994a3;--line:#e5e9ed;--paper:#fff;--wash:#f7f8fa;--navy:#17304b;--blue:#315e8b;--gold:#ba8955;--shadow:0 16px 50px rgba(24,37,52,.11);--round:18px}
@@ -125,6 +125,276 @@
 .drawer-section .outline{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.drawer-section .outline-item{min-height:0;padding:14px 14px 13px;display:grid;grid-template-columns:28px 1fr;gap:3px 8px;align-items:start;border-top:3px solid #7d9fb9}.outline-item .outline-num{font:normal 19px/1.25 Georgia,serif;color:#9cafbd}.outline-item .outline-description{font-size:13px;line-height:1.5;color:#314d65;font-weight:700}.outline-item .outline-range{grid-column:2;color:#8a98a7;font-size:11px;letter-spacing:.1px;font-weight:650}
 .video-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.video-link{display:flex;align-items:center;gap:13px;background:#eff5fa;border:1px solid #dce8f1;border-radius:11px;padding:16px;text-decoration:none;min-width:0}.video-link:hover{background:#e7f1f8;text-decoration:none}.video-link strong{display:block;color:#244d6b;font-size:14px;line-height:1.35}.video-link small{display:block;color:#6485a2;font-size:11px;margin-top:4px}.video-play{display:grid;place-items:center;flex:0 0 39px;width:39px;height:39px;border-radius:50%;background:#2d5d84;color:#fff;font-size:15px;padding-left:2px}.study-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.study-links a{font-size:12px;padding:7px 10px;border-radius:7px;background:#f7f9fb;color:#55718a;border:1px solid #e3e9ee;font-weight:650}.study-links a:hover{background:#edf4f8;text-decoration:none}
 @media(max-width:650px){.drawer-section .outline{grid-template-columns:1fr}.video-grid{grid-template-columns:1fr}.five-timeline-track{grid-template-columns:repeat(5,minmax(186px,1fr));min-width:970px}.epoch-card{min-height:224px}.epoch-date{font-size:10px}.timeline-note{padding-bottom:18px}}
+</style>
+<style id="warm-editorial-design-refresh">
+/*
+ * Warm editorial design review — October 29, 2026
+ * Visual-only refinements. Book data, layout templates, and interactions are untouched.
+ * Remove this final stylesheet block to revert to the original appearance.
+ */
+:root {
+  --ink:#243447;
+  --muted:#566575;
+  --soft:#637385;
+  --line:#E4E0D8;
+  --paper:#FFFEFC;
+  --wash:#F5F4F0;
+  --navy:#243B53;
+  --blue:#315A79;
+  --gold:#8B6742;
+  --shadow:0 14px 38px rgba(38,48,55,.10);
+  --round:14px;
+}
+body { background:var(--wash); color:var(--ink); -webkit-font-smoothing:antialiased; }
+a { color:#28587D; }
+button:focus-visible, a:focus-visible, input:focus-visible,
+summary:focus-visible, [tabindex]:focus-visible {
+  outline:3px solid #4D829F;
+  outline-offset:3px;
+}
+
+/* Reading frame and persistent navigation */
+.sidebar {
+  background:#FAF9F6;
+  border-right:1px solid var(--line);
+  padding-top:26px;
+}
+.brand { border-bottom-color:var(--line); padding-bottom:22px; }
+.brand strong { color:var(--navy); letter-spacing:-.3px; }
+.brand small { font-size:10.5px; color:#77664F; letter-spacing:1.25px; }
+.navlabel { color:#667383; font-size:10.5px; letter-spacing:1.4px; padding-top:19px; }
+.navbutton { color:#495A6A; font-size:13.5px; border-radius:9px; min-height:43px; }
+.navbutton:hover { background:#F0EEE8; }
+.navbutton.active { color:#203E59; background:#E8EDF0; box-shadow:inset 3px 0 0 #607D91; }
+.navnumber, .navbutton .counter { color:#68798A; }
+.navbutton.active .navnumber { color:#345D7E; }
+.navdivider { border-top-color:var(--line); }
+.sidebar-bottom { color:#647181; font-size:11.5px; line-height:1.75; }
+.topbar {
+  background:rgba(250,249,246,.96);
+  border-bottom-color:var(--line);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.crumb, .crumb button { color:#627080; }
+.crumb .current { color:#344B61; }
+.search {
+  border-color:#DEDCD5;
+  background:#FFFEFC;
+  color:var(--navy);
+  font-size:13px;
+  border-radius:10px;
+}
+.search::placeholder { color:#6D7B88; }
+.search-wrap svg { color:#64798A; }
+.search-results { background:#FFFEFC; border-color:var(--line); }
+.search-item { background:#FFFEFC; border-bottom-color:#EAE6DE; }
+.search-item:hover { background:#F3F1EC; }
+.search-item small { color:#5E6F7D; font-size:12px; }
+
+/* Hero, page titles and typographic hierarchy */
+.content { padding-top:32px; }
+.eyebrow { color:#80603F; font-size:11px; letter-spacing:1.55px; font-weight:800; }
+.hero { border-bottom:0; padding:9px 0 17px; }
+.hero h1 {
+  color:var(--navy);
+  letter-spacing:-1.55px;
+  margin:9px 0 13px;
+}
+.hero p, .section-intro p { color:var(--muted); font-size:15.5px; line-height:1.7; }
+.section-heading { margin:29px 0 15px; }
+.section-heading h2 { color:var(--navy); font-size:28px; }
+.section-heading p { color:var(--muted); font-size:13px; line-height:1.55; }
+.section-intro { padding-bottom:18px; }
+.section-intro h1, .book-intro h1 { color:var(--navy); }
+.book-subline { color:#586B7A; font-size:13px; }
+.book-subline .dot { color:#A8A49C; }
+.book-back { color:#335D79; font-size:13px; margin-bottom:15px; }
+.book-header { margin-bottom:16px; }
+.scroll-tip { color:#5E7082; font-size:12px; }
+
+/* Homepage stats become one quiet reference strip instead of three competing cards */
+.stats {
+  margin:20px 0 32px;
+  gap:0;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#FBFAF7;
+  overflow:hidden;
+}
+.stat {
+  background:transparent;
+  border:0;
+  border-radius:0;
+  padding:17px 24px;
+}
+.stat:not(:last-child) { border-right:1px solid var(--line); }
+.stat .statno { color:var(--navy); font-size:32px; }
+.stat .statlabel { color:#5F7080; font-size:11px; letter-spacing:.8px; }
+
+/* Timeline cards: neutral containers and legible historical labels */
+.timeline-panel {
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin-bottom:19px;
+}
+.timeline-top { border-bottom-color:var(--line); }
+.timeline-top strong { color:var(--navy); }
+.timeline-tag {
+  background:#EFEEE9;
+  color:#526578;
+  font-size:11px;
+}
+.timeline-subtitle { color:#5C6E7D; font-size:12.5px; }
+.epoch-card { background:#FAF9F6; border-color:#E6E2DA; }
+.epoch-card h4 { color:var(--navy); }
+.epoch-card p { color:#566676; font-size:12.5px; line-height:1.52; }
+.epoch-step { color:#80603F; }
+.epoch.nt .epoch-step { color:#426989; }
+.epoch-date { color:#526475; font-size:11.5px; }
+.era-chip { border-color:#E2DED6; background:#FFFEFC; color:#425569; font-size:12px; }
+.era-chip:hover { background:#EFF3F4; border-color:#B8C8D2; }
+.timeline-more { color:#3A627F; }
+.timeline-more summary { background:#ECEFEB; }
+.timeline-more summary:hover { background:#E2E9E6; }
+.timeline-note, .bible-time-legend { color:#5D6B78; font-size:12px; line-height:1.65; }
+
+/* Browse cards use one consistent visual language */
+.collection, .bookcard {
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:13px;
+  box-shadow:0 1px 2px rgba(37,48,59,.025);
+  transition:transform .17s ease,box-shadow .17s ease,border-color .17s ease;
+}
+.collection { min-height:173px; padding:20px 20px 19px; }
+.collection .clnum { color:#9A7850; }
+.collection h3 { color:var(--navy); font-size:20px; margin:13px 0 8px; }
+.collection p { color:#566777; font-size:12.5px; line-height:1.48; }
+.collection .clcount { color:#6F593D; font-size:11px; }
+.collection .clarrow, .bookcard .bookarrow { color:#59768A; }
+.bookgrid { gap:14px; }
+.bookcard { min-height:177px; padding:20px; }
+.bookcard .bookindex { color:#80603F; font-size:11px; }
+.bookcard h3 { color:var(--navy); margin:15px 0 8px; }
+.bookcard p { color:#566676; font-size:13px; line-height:1.58; }
+.bookcard .bookmeta { color:#745B3E; font-size:11px; }
+@media(hover:hover) {
+  .collection:hover, .bookcard:hover {
+    border-color:#B9C9CD;
+    box-shadow:0 9px 25px rgba(34,49,58,.08);
+    transform:translateY(-2px);
+  }
+}
+
+/* Book pages: let the summary feel like the central reading surface */
+.book-facts, .info-box {
+  background:var(--paper);
+  border-color:var(--line);
+  border-radius:12px;
+}
+.book-fact + .book-fact { border-left-color:var(--line); }
+.book-fact .info-title, .info-box .info-title {
+  color:#80603F;
+  font-size:11px;
+  letter-spacing:1.1px;
+  margin-bottom:8px;
+}
+.book-fact p, .info-box p { color:#32475B; line-height:1.6; }
+.info-box { padding:17px 22px 19px; }
+.purpose-box p { font-size:15.5px; }
+.summarycard {
+  background:#FBF8F1;
+  border:1px solid #E0D8C9;
+  border-left:3px solid #A68A64;
+  border-radius:12px;
+  padding:25px 27px 27px;
+}
+.summarycard h2 { color:var(--navy); font-size:27px; margin:4px 0 10px; }
+.summarycard p { color:#354A5D; font-size:17.5px; line-height:1.77; }
+.verses-box .verse-intro { color:#5D6D7C; font-size:12.5px; }
+.verses-box .verse-quotation {
+  background:#FBFAF7;
+  border-color:#E3DFD7;
+  border-radius:9px;
+  padding:15px 16px;
+}
+.verses-box .verse-quotation:hover { background:#F1F2EE; border-color:#B8C6CD; }
+.verses-box .verse-quotation strong { color:#285675; font-size:13.5px; }
+.verses-box .verse-quotation span { color:#34475A; font-size:15.5px; line-height:1.6; }
+.mutebtn, .secondarybtn { background:var(--paper); border-color:#DADDD8; color:#385872; }
+.mutebtn:hover, .secondarybtn:hover { background:#F1F0EB; }
+.primarybtn { background:#243B53; border-color:#243B53; }
+.primarybtn:hover { background:#315772; }
+.pager { border-top-color:var(--line); }
+.pager button { color:#365E7B; font-size:14px; }
+.pager small { color:#607385; font-size:11px; }
+
+/* Deep study panel: warmer reading surface, quiet outlines and accessible notes */
+.drawer { background:#F6F4EF; }
+.drawer-head { background:#FFFEFC; border-bottom-color:var(--line); }
+.drawer-head h2, .drawer-section h3 { color:var(--navy); }
+.drawer-section { background:var(--paper); border-color:var(--line); border-radius:13px; }
+.drawer-section .desc { color:#5E6F7D; font-size:13px; line-height:1.55; }
+.drawer-section .reading-outline-head { border-bottom-color:#334A5E; }
+.drawer-section .reading-outline-head span { color:#5F7182; }
+.trad-outline { border-color:#E0DBD2; background:#FFFEFC; }
+.trad-outline li { border-bottom-color:#E5E0D7; }
+.trad-outline li:nth-child(2n) { background:#FAF9F6; }
+.trad-outline li:hover { background:#F1F1EC; }
+.trad-outline .trad-range { background:#EFEEE8; border-color:#E1DCD3; }
+.bible-chronology { border-top-color:#354A5E; }
+.bible-chronology .story-note { color:#5F7080; font-size:12px; }
+.bible-time-milestone .time-context { color:#5D6C7A; font-size:11px; }
+.bible-time-legend { color:#5E6C78; }
+.bible-map-caption, .footnote { color:#5E6C79; font-size:12px; }
+.bible-real-map { border-color:#DFDBD3; }
+.video-link { background:#F2F5F4; border-color:#DEE6E6; }
+.video-link:hover { background:#E7EEEE; }
+.video-link small { color:#526E83; font-size:12px; }
+.study-links a { background:#F7F6F2; border-color:#E5E0D9; color:#3C607D; }
+.themechips span { background:#F0F1EB; border-color:#E2E3DA; color:#3F5E71; }
+.sources { border-top-color:var(--line); color:#657281; }
+.sources strong { color:#526477; }
+.sources a { color:#355B7B; }
+
+/* Keep the original compact mobile layout while making text more comfortable */
+@media(max-width:850px) {
+  .sidebar { background:#FAF9F6; }
+  .content { padding-top:27px; }
+}
+@media(max-width:600px) {
+  .content { padding-top:22px; }
+  .hero h1 { font-size:40px; }
+  .hero p { font-size:14.5px; }
+  .stats { margin:18px 0 25px; }
+  .stat { padding:11px 10px; }
+  .stat .statno { font-size:27px; }
+  .stat .statlabel { font-size:10px; letter-spacing:.3px; }
+  .section-heading h2 { font-size:25px; }
+  .section-heading p { font-size:12.5px; }
+  .collection { padding:17px 14px; min-height:167px; }
+  .collection h3 { font-size:18px; }
+  .collection p { font-size:12px; }
+  .bookcard { min-height:155px; padding:18px; }
+  .bookcard p { font-size:13px; }
+  .book-fact + .book-fact { border-left:0; border-top:1px solid var(--line); }
+  .info-box { padding:15px 17px; }
+  .book-fact .info-title, .info-box .info-title { font-size:11px; }
+  .book-fact p, .info-box p { font-size:15px; }
+  .verses-box .verse-quotation { padding:12px 14px; }
+  .verses-box .verse-quotation span { font-size:15px; }
+  .summarycard { padding:21px 19px 23px; }
+  .summarycard h2 { font-size:25px; }
+  .summarycard p { font-size:16.5px; line-height:1.73; }
+  .drawer-section { padding:21px 18px; }
+  .drawer-section .desc { font-size:12.5px; }
+  .epoch-card p { font-size:12px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  .collection,.bookcard { transition:none; }
+}
 </style></head><body>
 <div class="app"><aside class="sidebar" id="sidebar"><div class="brand" role="button" tabindex="0" onclick="navigate('home')" onkeydown="if(event.key==='Enter')navigate('home')"><div class="brand-icon" aria-hidden="true"><span class="brand-book"><i class="brand-cross"></i></span></div><div><strong>Bible Overview</strong><small>THE BIBLE, OUTLINED</small></div></div><div id="nav"></div><div class="sidebar-bottom">66 books · 8 sections<br>Historical dates are approximate.<br>Designed for study and exploration.</div></aside><div class="sidebar-shade" id="shade" onclick="closeMenu()"></div>
 <main class="main"><div class="topbar"><button class="mobilemenu" aria-label="Open navigation" onclick="toggleMenu()">☰</button><div id="crumb" class="crumb"></div><div class="search-wrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" class="search" placeholder="Search 66 books..." autocomplete="off" aria-label="Search books"><div class="search-results" id="searchResults"></div></div></div><div class="content" id="view"></div></main></div>
