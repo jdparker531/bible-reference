@@ -510,9 +510,18 @@ const B=DATA.books,S=DATA.sections,E=DATA.eras,LOC=DATA.locations;
 const $=id=>document.getElementById(id);
 let state={type:'home',section:0,book:0};
 let lastFocus=null;
+const drawerBeforeOpenHandlers=[];
+const drawerEnhancers=[];
+const drawerBeforeCloseHandlers=[];
+function registerDrawerLifecycle({beforeOpen,enhance,beforeClose}){
+ if(beforeOpen)drawerBeforeOpenHandlers.push(beforeOpen);
+ if(enhance)drawerEnhancers.push(enhance);
+ if(beforeClose)drawerBeforeCloseHandlers.push(beforeClose);
+}
 const safe=t=>String(t??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const slug=t=>encodeURIComponent(t);
 const YOUVERSION_CODES={"Genesis":"GEN","Exodus":"EXO","Leviticus":"LEV","Numbers":"NUM","Deuteronomy":"DEU","Joshua":"JOS","Judges":"JDG","Ruth":"RUT","1 Samuel":"1SA","2 Samuel":"2SA","1 Kings":"1KI","2 Kings":"2KI","1 Chronicles":"1CH","2 Chronicles":"2CH","Ezra":"EZR","Nehemiah":"NEH","Esther":"EST","Job":"JOB","Psalms":"PSA","Proverbs":"PRO","Ecclesiastes":"ECC","Song of Solomon":"SNG","Isaiah":"ISA","Jeremiah":"JER","Lamentations":"LAM","Ezekiel":"EZK","Daniel":"DAN","Hosea":"HOS","Joel":"JOL","Amos":"AMO","Obadiah":"OBA","Jonah":"JON","Micah":"MIC","Nahum":"NAM","Habakkuk":"HAB","Zephaniah":"ZEP","Haggai":"HAG","Zechariah":"ZEC","Malachi":"MAL","Matthew":"MAT","Mark":"MRK","Luke":"LUK","John":"JHN","Acts":"ACT","Romans":"ROM","1 Corinthians":"1CO","2 Corinthians":"2CO","Galatians":"GAL","Ephesians":"EPH","Philippians":"PHP","Colossians":"COL","1 Thessalonians":"1TH","2 Thessalonians":"2TH","1 Timothy":"1TI","2 Timothy":"2TI","Titus":"TIT","Philemon":"PHM","Hebrews":"HEB","James":"JAS","1 Peter":"1PE","2 Peter":"2PE","1 John":"1JN","2 John":"2JN","3 John":"3JN","Jude":"JUD","Revelation":"REV"};
+const SINGLE_CHAPTER_BOOKS=new Set(["Obadiah","Philemon","2 John","3 John","Jude"]);
 const bibleUrl=(b,ref='1')=>{
  const code=YOUVERSION_CODES[b.name];
  const match=String(ref).trim().match(/^(\d+)(?::(\d+))?/);
@@ -558,7 +567,7 @@ let prev=B[b.id-1],next=B[b.id+1];h+='<div class="pager"><div>'+(prev?'<button o
 function svgMap(b){let names=b.places,p=names.map(n=>({name:n,ll:LOC[n]}));let X=lon=>22+(lon-10)*15.3,Y=lat=>22+(44-lat)*16.6;let marks=p.map((v,i)=>{let x=X(v.ll[0]),y=Y(v.ll[1]);let anchor=x>540?'end':'start';let dx=x>540?-9:9;return '<g><circle cx="'+x+'" cy="'+y+'" r="5" fill="#a87542" stroke="white" stroke-width="2"/><text x="'+(x+dx)+'" y="'+(y-10-(i%2)*2)+'" fill="#435c6b" text-anchor="'+anchor+'" font-size="13" font-weight="700">'+safe(v.name)+'</text></g>'}).join('');let path=p.length>1?'<polyline points="'+p.map(v=>X(v.ll[0])+','+Y(v.ll[1])).join(' ')+'" fill="none" stroke="#bf9a73" stroke-width="2" stroke-dasharray="5 7" opacity=".6"/>':'';let grids='';for(let i=1;i<5;i++){grids+='<line x1="'+(i*125)+'" y1="10" x2="'+(i*125)+'" y2="260" stroke="#dce8e8" stroke-width="1"/>';grids+='<line x1="10" y1="'+(i*51)+'" x2="680" y2="'+(i*51)+'" stroke="#dce8e8" stroke-width="1"/>'}
 return '<div class="location-graphic"><svg viewBox="0 0 690 290" role="img" aria-label="Schematic positions of '+safe(names.join(', '))+'"><rect x="0" y="0" width="690" height="290" rx="12" fill="#eff4f3"/>'+grids+'<text x="32" y="265" fill="#becdca" font-size="16" font-family="Georgia,serif" font-style="italic">West ←</text><text x="565" y="265" fill="#becdca" font-size="16" font-family="Georgia,serif" font-style="italic">→ East</text>'+path+marks+'</svg><div class="local-caption">Schematic orientation only · not to scale · locations are contextual, not a verified itinerary</div></div>'}
 function resetDrawerScroll(){const drawer=$('overlay').querySelector('.drawer');if(drawer)drawer.scrollTop=0;}
-function openDrawer(){let b=B[state.book],e=E[b.era];lastFocus=document.activeElement;$('drawer-title').textContent=b.name;let h='<div class="drawer-section"><div class="eyebrow">LITERARY STRUCTURE</div><h3>How the book unfolds</h3><p class="desc">A simplified three-part outline to aid reading and recall.</p><div class="outline">';b.outline.forEach((item,i)=>{h+='<div class="outline-item"><div class="onum">0'+(i+1)+'</div><span>'+safe(item)+'</span></div>'});h+='</div></div>';
+function openDrawer(){let b=B[state.book],e=E[b.era];for(const handler of drawerBeforeOpenHandlers)handler({book:b});lastFocus=document.activeElement;$('drawer-title').textContent=b.name;let h='<div class="drawer-section"><div class="eyebrow">LITERARY STRUCTURE</div><h3>How the book unfolds</h3><p class="desc">A simplified three-part outline to aid reading and recall.</p><div class="outline">';b.outline.forEach((item,i)=>{h+='<div class="outline-item"><div class="onum">0'+(i+1)+'</div><span>'+safe(item)+'</span></div>'});h+='</div></div>';
 h+='<div class="drawer-section"><div class="eyebrow">THEOLOGICAL THEMES</div><h3>Central ideas</h3><p class="desc">Themes emphasized by the book’s overall argument and message.</p><div class="themechips">'+b.themes.map(x=>'<span>'+safe(x)+'</span>').join('')+'</div></div>';
 h+='<div class="drawer-section"><div class="eyebrow">HISTORICAL CONTEXT</div><h3>Place in the biblical story</h3><p class="desc">This graphic shows a representative era, not the date the text was written.</p><div class="era-detail">'+safe(e.name)+' · '+safe(e.date)+'</div><div class="range" style="--pct:'+((b.era+.5)/12*100)+'%"></div><div class="range-labels"><span>Ancient history</span><strong>'+safe(e.short)+'</strong><span>Apostolic era</span></div><p class="footnote" style="margin:17px 0 0">Estimated date of composition: '+safe(b.date)+'. The chronology of several ancient books is uncertain or debated.</p></div>';
 h+='<div class="drawer-section"><div class="eyebrow">GEOGRAPHY</div><h3>Where the story connects</h3><p class="desc">Reference locations associated with the book or its historical background.</p>'+svgMap(b)+'<div class="map-pills">'+b.places.map(x=>'<span>'+safe(x)+'</span>').join('')+'</div></div>';
@@ -566,8 +575,8 @@ if(b.authorOptions){h+='<div class="drawer-section"><div class="eyebrow">AUTHORS
 h+='<div class="drawer-section"><div class="eyebrow">CONNECTIONS</div><h3>Read alongside</h3><p class="desc">Explore related books through themes, history, or the development of the biblical story.</p>'+b.relations.map(name=>{let idx=B.findIndex(x=>x.name===name);return '<button class="relbtn" onclick="closeDrawer();navigate(\'book\','+idx+')">'+safe(name)+' ↗</button>'}).join('')+'</div>';
 h+='<div class="drawer-section"><div class="eyebrow">APPLY THE WORD</div><h3>Questions for reflection</h3><p class="desc">Designed to move from understanding to faithful living.</p><ol style="color:#4e6377;font-size:13px;line-height:1.9;padding-left:20px"><li>How does the theme of <strong>'+safe(b.themes[0].toLowerCase())+'</strong> emerge from the book?</li><li>What does this book reveal about God’s character and purposes?</li><li>What would obedience to its central message look like in your responsibilities and relationships?</li></ol></div>';
 h+='<div class="drawer-section"><div class="eyebrow">GO FURTHER</div><h3>Trusted study resources</h3><p class="desc">External references for deeper study and differing academic viewpoints.</p><div class="map-pills"><a class="secondarybtn" target="_blank" rel="noopener noreferrer" href="https://www.esv.org/resources/esv-global-study-bible/overview-of-the-bible/">ESV Study Bible context ↗</a><a class="secondarybtn" target="_blank" rel="noopener noreferrer" href="https://bibleproject.com/downloads/">BibleProject overviews ↗</a><a class="secondarybtn" target="_blank" rel="noopener noreferrer" href="'+bibleUrl(b)+'">Read '+safe(b.name)+' ↗</a></div></div>';
-$('drawer-content').innerHTML=h;$('overlay').classList.add('open');document.body.style.overflow='hidden';resetDrawerScroll();$('closeDrawer').focus({preventScroll:true});}
-function closeDrawer(){if(!$('overlay').classList.contains('open'))return;resetDrawerScroll();$('overlay').classList.remove('open');document.body.style.overflow='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
+$('drawer-content').innerHTML=h;$('overlay').classList.add('open');document.body.style.overflow='hidden';for(const enhance of drawerEnhancers)enhance({panel:$('drawer-content'),book:b});resetDrawerScroll();requestAnimationFrame(()=>{resetDrawerScroll();requestAnimationFrame(resetDrawerScroll)});$('closeDrawer').focus({preventScroll:true});}
+function closeDrawer(){for(const handler of drawerBeforeCloseHandlers)handler();if(!$('overlay').classList.contains('open'))return;resetDrawerScroll();$('overlay').classList.remove('open');document.body.style.overflow='';if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
 function copyBookLink(btn){let url=location.href;navigator.clipboard?.writeText(url).then(()=>{if(btn){let t=btn.textContent;btn.textContent='✓ Link copied';setTimeout(()=>btn.textContent=t,1600)}}).catch(()=>window.prompt('Copy this link',url))??window.prompt('Copy this link',url)}
 function sources(){return '<footer class="sources"><strong>Editorial approach & sources</strong><p>Historic Christian interpretation and mainstream biblical scholarship inform these concise descriptions. Authorship and dates are often disputed; proposed authors should not be taken as certain. Timeline placements indicate historical setting, not composition date.</p><a href="https://www.esv.org/resources/esv-global-study-bible/overview-of-the-bible/" target="_blank" rel="noopener noreferrer">ESV Global Study Bible ↗</a><a href="https://bibleproject.com/downloads/" target="_blank" rel="noopener noreferrer">BibleProject ↗</a><a href="https://www.biblegateway.com/learn/bible-101/choosing-a-bible/read-bible-chronological-order/" target="_blank" rel="noopener noreferrer">Bible Gateway chronology ↗</a><a href="https://www.americanbible.org/engage/bible-resources/articles/chronological-reading-plan/" target="_blank" rel="noopener noreferrer">American Bible Society ↗</a><p style="margin-top:14px">Original educational synthesis; this interactive overview is not an official product of those publishers. Full verse quotations are taken from the public-domain World English Bible (WEB).</p></footer>'}
 function render(){menu();breadcrumbs();$('view').innerHTML=state.type==='home'?homepage():state.type==='section'?sectionpage():bookpage();document.title=(state.type==='home'?'Overview':state.type==='section'?S[state.section].title:B[state.book].name)+' — Bible Overview'}
@@ -742,8 +751,7 @@ function improveDrawer(){
   panel.appendChild(themes);
  }
 }
-const originalOpenDrawer=openDrawer;
-openDrawer=function(){originalOpenDrawer();improveDrawer();};
+registerDrawerLifecycle({enhance:improveDrawer});
 const originalTimeliner=timeliner;
 timeliner=function(testament){
  const shown=phases.filter(p=>p.testament===testament);
@@ -785,8 +793,8 @@ const historicalLinks={
  "Acts":13,"Romans":13,"1 Corinthians":13,"2 Corinthians":13,"Galatians":13,
  "Ephesians":13,"Philippians":13,"Colossians":13,"1 Thessalonians":13,
  "2 Thessalonians":13,"1 Timothy":13,"2 Timothy":13,"Titus":13,"Philemon":13,
- "Hebrews":8,"James":13,"1 Peter":8,"2 Peter":8,"1 John":13,
- "2 John":13,"3 John":13,"Jude":8,"Revelation":8
+ "Hebrews":8,"James":11,"1 Peter":8,"2 Peter":8,"1 John":8,
+ "2 John":8,"3 John":8,"Jude":8,"Revelation":8
 };
 const mapCaptions={
  2:"Israel's Exodus and entry into Canaan",3:"Division of the twelve tribes",4:"David and Solomon's kingdom",
@@ -811,14 +819,16 @@ function outlineRedesign(panel){
    return match[1]+(match[2]?":"+match[2]:"");
  }
  const list=document.createElement("div");
+ const singleChapter=SINGLE_CHAPTER_BOOKS.has(b.name);
  list.innerHTML='<div class="reading-outline-head"><strong>Literary divisions</strong><span>'+original.length+' sections</span></div>'+
    '<ol class="trad-outline">'+original.map((item,i)=>{
      const first=beginning(item.text,item.range);
-     const url=bibleUrl(b,first);
+     const destination=singleChapter&&!first.includes(":")?"1:"+first:first;
+     const url=bibleUrl(b,destination);
      const ref=item.range||item.text.match(/Psalms\s+(\d+(?:[–-]\d+)?)/i)?.[1]||first;
-     return '<li><a class="trad-row-link" href="'+url+'" target="_blank" rel="noopener noreferrer" title="Read '+safe(b.name)+' '+safe(first)+' in YouVersion"><span class="trad-roman">'+roman(i+1)+'.</span><span class="trad-text">'+safe(item.text)+'</span><span class="trad-range">CH. '+safe(ref)+' ↗</span></a></li>';
+     return '<li><a class="trad-row-link" href="'+url+'" target="_blank" rel="noopener noreferrer" title="Read '+safe(b.name)+' '+(singleChapter?'verse ':'chapter ')+safe(first)+' in YouVersion"><span class="trad-roman">'+roman(i+1)+'.</span><span class="trad-text">'+safe(item.text)+'</span><span class="trad-range">'+(singleChapter?'VV. ':'CH. ')+safe(ref)+' ↗</span></a></li>';
    }).join('')+'</ol>';
- sec.querySelector(".desc").textContent="Select any division to read from its opening chapter in YouVersion.";
+ sec.querySelector(".desc").textContent="Select any division to read from its opening "+(singleChapter?"verse":"chapter")+" in YouVersion.";
  sec.querySelector(".outline")?.replaceWith(list);
  if(b.name==="Mark"){
   const notice=document.createElement("div");
@@ -1014,20 +1024,17 @@ function cleanReflection(panel){
  });
 }
 function cleanupMap(){if(activeMap){activeMap.remove();activeMap=null;}}
-const priorOpen=openDrawer;
-openDrawer=function(){
- cleanupMap();
- priorOpen();
- const panel=document.getElementById("drawer-content");
- const b=B[state.book];
- if(!panel||!b)return;
- outlineRedesign(panel);
- timelineRedesign(panel,b);
- geographyRedesign(panel,b);
- cleanReflection(panel);
-};
-const priorClose=closeDrawer;
-closeDrawer=function(){cleanupMap();priorClose();};
+registerDrawerLifecycle({
+ beforeOpen:cleanupMap,
+ enhance:({panel,book})=>{
+  if(!panel||!book)return;
+  outlineRedesign(panel);
+  timelineRedesign(panel,book);
+  geographyRedesign(panel,book);
+  cleanReflection(panel);
+ },
+ beforeClose:cleanupMap
+});
 })();
 </script>
 
@@ -1129,20 +1136,14 @@ function decorateVideos(panel){
    }
  });
 }
-const oldOpen=openDrawer;
-openDrawer=function(){
- oldOpen();
- const panel=document.getElementById("drawer-content"),b=B[state.book];
- if(!panel||!b)return;
- replaceHistoricalPanel(panel,b);
+registerDrawerLifecycle({enhance:({panel,book})=>{
+ if(!panel||!book)return;
+ replaceHistoricalPanel(panel,book);
  decorateVideos(panel);
  // Remove explanatory subnotes after all existing drawer enrichments have run.
  // Leave substantive authorship data, source links, and map tile attribution intact.
  panel.querySelectorAll('p.desc, p.footnote, p.bible-map-caption').forEach(note=>note.remove());
-  // Reset again after all book-specific content has been rebuilt and laid out.
-  resetDrawerScroll();
-  requestAnimationFrame(()=>{resetDrawerScroll();requestAnimationFrame(resetDrawerScroll);});
-};
+}});
 })();
 </script>
 
