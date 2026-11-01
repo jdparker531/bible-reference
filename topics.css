@@ -1,0 +1,29 @@
+/* Explore Topics in Christian Faith — matches the existing Theology collection */
+.topics-page{max-width:1100px;margin:0 auto;padding-bottom:55px}
+.topics-header{max-width:830px;padding:6px 0 26px}
+.topics-header .eyebrow{display:block;color:#a27a51;font-size:10px;font-weight:800;letter-spacing:1.55px;margin-bottom:8px}
+.topics-header h1{font:700 clamp(30px,4vw,43px)/1.17 Georgia,serif;letter-spacing:-.8px;color:#17304b;margin:0 0 13px}
+.topics-header>p{font-size:15px;line-height:1.78;color:#526476;margin:0 0 13px;max-width:745px}
+.topics-context{font-size:12px;line-height:1.7;color:#788595;max-width:800px}
+.topics-toolbar{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:8px 0 22px}
+.topics-search-label{height:43px;display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #e0e6ec;border-radius:11px;padding:0 13px;flex:1 1 280px;max-width:470px;color:#789}
+.topics-search-label:focus-within{border-color:#729cc2;box-shadow:0 0 0 3px rgba(74,137,193,.11)}
+.topics-search-label input{border:0;outline:0;box-shadow:none;background:transparent;min-width:0;width:100%;font-size:13px;color:#2e4354}
+.topics-search-label input:focus-visible{outline:none}
+.topics-count{margin-left:auto;font-size:11px;font-weight:700;color:#8290a0;white-space:nowrap}
+.topics-entries{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;gap:15px}
+.topics-card{display:flex;gap:15px;background:#fff;border:1px solid #e3e8ed;border-radius:16px;padding:22px 21px;box-shadow:0 5px 20px rgba(31,54,75,.025);min-width:0;transition:border-color .18s,box-shadow .18s}
+.topics-card:hover{border-color:#bacddc;box-shadow:0 10px 24px rgba(31,54,75,.05)}
+.topics-rank{font:700 12px/1.3 Georgia,serif;color:#b68b5b;min-width:26px;padding-top:3px}
+.topics-body{min-width:0;display:flex;flex-direction:column;align-items:flex-start;flex:1}
+.topics-card h2{font:700 20px/1.26 Georgia,serif;letter-spacing:-.3px;color:#18334b;margin:0 0 9px}
+.topics-card p{font-size:13px;line-height:1.74;color:#586a79;margin:4px 0 17px}
+.topics-scripture-label{color:#8c795f;font-size:9px;letter-spacing:1.05px;font-weight:800;margin-top:auto;margin-bottom:10px}
+.topics-passages{display:flex;flex-wrap:wrap;gap:7px}
+.topics-passage{display:inline-flex;align-items:center;gap:5px;border:1px solid #dce5ec;border-radius:8px;background:#f7fafb;padding:6px 9px;text-decoration:none;font-size:11px;font-weight:650;line-height:1.35;color:#315e8b}
+.topics-passage:hover{color:#123b63;background:#eaf2f8;border-color:#bed2e2;text-decoration:underline}
+.topics-passage span{font-size:12px}
+.topics-empty{grid-column:1/-1;border:1px dashed #d5dce4;border-radius:13px;padding:38px 22px;text-align:center;color:#81909d}
+.topics-footer{font-size:11px;line-height:1.7;color:#8994a3;margin-top:24px;max-width:840px}
+@media(max-width:1030px){.topics-entries{grid-template-columns:1fr}.topics-header h1{font-size:36px}}
+@media(max-width:650px){.topics-header{padding-top:5px}.topics-toolbar{gap:9px}.topics-search-label{max-width:none;flex-basis:100%}.topics-count{margin-left:0}.topics-entries{gap:11px}.topics-card{padding:18px 15px;gap:10px}.topics-card h2{font-size:18px}.topics-rank{font-size:11px;min-width:22px}.topics-passage{font-size:11px}}
