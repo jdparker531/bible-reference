@@ -6,7 +6,7 @@ const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&
 function passageLink(pair){
   const label=pair[0],ref=pair[1];
   const url="https://www.bible.com/bible/206/"+ref+".WEBUS";
-  const isRange=/[–—]/.test(label)&&!/^.*:\\d+[–—]\\d+$/.test(label);
+  const isRange=/[–—]/.test(label)&&!/^.*:\d+[–—]\d+$/.test(label);
   return '<a class="topics-passage" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="'+esc(isRange?"Opens at the beginning of this passage; continue through the listed chapters in YouVersion":"Read "+label+" in YouVersion")+'" aria-label="'+esc("Read "+label+" in YouVersion (opens in new tab)")+'">'+esc(label)+' <span aria-hidden="true">↗</span></a>';
 }
 function topicCard(topic,i){
