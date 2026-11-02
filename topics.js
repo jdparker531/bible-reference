@@ -5,9 +5,9 @@ const TOPICS=[["The Crucifixion and Atonement of Jesus Christ","Jesus willingly 
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function passageLink(pair){
   const label=pair[0],ref=pair[1];
-  const url="https://www.bible.com/bible/206/"+ref+".WEBUS";
+  const url="https://www.bible.com/bible/59/"+ref+".ESV";
   const isRange=/[–—]/.test(label)&&!/^.*:\d+[–—]\d+$/.test(label);
-  return '<a class="topics-passage" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="'+esc(isRange?"Opens at the beginning of this passage; continue through the listed chapters in YouVersion":"Read "+label+" in YouVersion")+'" aria-label="'+esc("Read "+label+" in YouVersion (opens in new tab)")+'">'+esc(label)+' <span aria-hidden="true">↗</span></a>';
+  return '<a class="topics-passage" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="'+esc(isRange?"Opens at the beginning of this passage; continue through the listed chapters in ESV on YouVersion":"Read "+label+" in ESV on YouVersion")+'" aria-label="'+esc("Read "+label+" in ESV on YouVersion (opens in new tab)")+'">'+esc(label)+' <span aria-hidden="true">↗</span></a>';
 }
 function topicCard(topic,i){
  return '<article class="topics-card"><div class="topics-rank">'+String(i+1).padStart(2,"0")+'</div><div class="topics-body"><h2>'+esc(topic[0])+'</h2><p>'+esc(topic[1])+'</p><div class="topics-scripture-label">SCRIPTURE PASSAGES</div><div class="topics-passages">'+topic[2].map(passageLink).join("")+'</div></div></article>';
@@ -21,8 +21,8 @@ window.filterFaithTopics=function(){
  count.textContent=matches.length+" of "+TOPICS.length+" topics";
 };
 window.renderFaithTopics=function(){
- return '<section class="topics-page"><div class="topics-header"><span class="eyebrow">STORIES, TEACHINGS &amp; CHRISTIAN BELIEF</span><h1>Explore Topics in Christian Faith</h1><p>Explore 40 foundational biblical stories, teachings, and doctrines, ranked by their importance to the Christian faith. Read the summary and open the relevant Scripture passages in YouVersion.</p><div class="topics-context">Curated from a broadly Protestant Christian perspective. When topics are similarly significant, New Testament subjects receive priority. The ranking can be refined over time.</div></div>'+
+ return '<section class="topics-page"><div class="topics-header"><span class="eyebrow">STORIES, TEACHINGS &amp; CHRISTIAN BELIEF</span><h1>Explore Topics in Christian Faith</h1><p>Explore 40 foundational biblical stories, teachings, and doctrines, ranked by their importance to the Christian faith. Read the summary and open the relevant Scripture passages in ESV on YouVersion.</p><div class="topics-context">Curated from a broadly Protestant Christian perspective. When topics are similarly significant, New Testament subjects receive priority. The ranking can be refined over time.</div></div>'+
  '<div class="topics-toolbar"><label class="topics-search-label" for="faithTopicsSearch"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="faithTopicsSearch" type="search" placeholder="Search topics, passages, Bible books..." oninput="filterFaithTopics()" autocomplete="off"></label><span class="topics-count" id="faithTopicsCount">40 of 40 topics</span></div>'+
- '<div class="topics-entries" id="faithTopicsEntries">'+TOPICS.map(topicCard).join("")+'</div><p class="topics-footer">Scripture links open YouVersion in a new tab, using the World English Bible (WEBUS). References spanning several chapters open at the first chapter; continue reading through the indicated range in YouVersion.</p></section>';
+ '<div class="topics-entries" id="faithTopicsEntries">'+TOPICS.map(topicCard).join("")+'</div><p class="topics-footer">Scripture links open YouVersion in a new tab, using the English Standard Version (ESV). References spanning several chapters open at the first chapter; continue reading through the indicated range in ESV on YouVersion.</p></section>';
 };
 })();
