@@ -4,7 +4,6 @@
 .topics-header .eyebrow{display:block;color:#a27a51;font-size:10px;font-weight:800;letter-spacing:1.55px;margin-bottom:8px}
 .topics-header h1{font:700 clamp(30px,4vw,43px)/1.17 Georgia,serif;letter-spacing:-.8px;color:#17304b;margin:0 0 13px}
 .topics-header>p{font-size:15px;line-height:1.78;color:#526476;margin:0 0 13px;max-width:745px}
-.topics-context{font-size:12px;line-height:1.7;color:#788595;max-width:800px}
 .topics-toolbar{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:8px 0 22px}
 .topics-search-label{height:43px;display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #e0e6ec;border-radius:11px;padding:0 13px;flex:1 1 280px;max-width:470px;color:#789}
 .topics-search-label:focus-within{border-color:#729cc2;box-shadow:0 0 0 3px rgba(74,137,193,.11)}
