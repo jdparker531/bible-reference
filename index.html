@@ -503,9 +503,17 @@ summary:focus-visible, [tabindex]:focus-visible {
 .search-more{display:block;width:100%;padding:13px 15px;border:0;background:#f6f8fa;color:#315e82;font-size:12px;font-weight:800;text-align:center}
 .search-more:hover{background:#eaf1f7}
 @media(max-width:600px){.search-results{position:fixed;top:64px;left:8px;right:8px;width:auto;max-height:65vh}.search-item-top small{max-width:44%;white-space:normal}}
+/* Shared clear-search controls */
+.search-clear{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;border:0;border-radius:50%;background:transparent;color:#6c7b8b;font-size:22px;font-weight:400;line-height:1;cursor:pointer;padding:0}
+.search-clear[hidden]{display:none!important}
+.search-clear:hover{background:#e9edf1;color:#254560}
+.search-clear:focus-visible{outline:2px solid #729cc2;outline-offset:2px}
+.search-wrap>.search-clear{position:absolute;top:50%;right:7px;transform:translateY(-50%);z-index:1}
+.search-wrap>.search{padding-right:43px}
+.search-wrap input::-webkit-search-cancel-button,.theology-search-label input::-webkit-search-cancel-button,.topics-search-label input::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none;display:none}
 </style><link rel="stylesheet" href="theology.css"><link rel="stylesheet" href="topics.css"></head><body>
 <div class="app"><aside class="sidebar" id="sidebar"><div class="brand" role="button" tabindex="0" onclick="navigate('home')" onkeydown="if(event.key==='Enter')navigate('home')"><div class="brand-icon" aria-hidden="true"><span class="brand-book"><i class="brand-cross"></i></span></div><div><strong>Bible Overview</strong><small>THE BIBLE, OUTLINED</small></div></div><div id="nav"></div><div class="sidebar-bottom">66 books · 8 sections<br>Historical dates are approximate.<br>Designed for study and exploration.</div></aside><div class="sidebar-shade" id="shade" onclick="closeMenu()"></div>
-<main class="main"><div class="topbar"><button class="mobilemenu" aria-label="Open navigation" onclick="toggleMenu()">☰</button><div id="crumb" class="crumb"></div><div class="search-wrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" class="search" placeholder="Search books, people, places..." autocomplete="off" aria-label="Search books"><div class="search-results" id="searchResults"></div></div></div><div class="content" id="view"></div></main></div>
+<main class="main"><div class="topbar"><button class="mobilemenu" aria-label="Open navigation" onclick="toggleMenu()">☰</button><div id="crumb" class="crumb"></div><div class="search-wrap"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search" class="search" type="search" placeholder="Search books, people, places..." autocomplete="off" aria-label="Search books"><button type="button" class="search-clear" hidden aria-label="Clear Bible search" title="Clear search" data-clear-for="search">×</button><div class="search-results" id="searchResults"></div></div></div><div class="content" id="view"></div></main></div>
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Expanded book detail"><div class="drawer"><div class="drawer-head"><div><span class="eyebrow">DEEPER INTO THE BOOK</span><h2 id="drawer-title"></h2></div><button id="closeDrawer" class="closebtn" onclick="closeDrawer()" aria-label="Close expanded detail">×</button></div><div class="drawer-content" id="drawer-content"></div></div></div>
 <script src="theology.js"></script><script src="topics.js"></script>
 <script>
@@ -650,6 +658,25 @@ function searchSnippet(value,query){
   return (start?'…':'')+text.slice(start,end)+(end<text.length?'…':'');
 }
 const search=$('search'),results=$('searchResults');
+/* Shared clear buttons for all three search fields. */
+function syncSearchClear(input){
+ const clear=input.closest('.search-wrap, .theology-search-label, .topics-search-label')?.querySelector('.search-clear');
+ if(clear)clear.hidden=input.value.length===0;
+}
+function clearSearchInput(inputId){
+ const input=$(inputId);
+ if(!input)return;
+ input.value='';
+ input.dispatchEvent(new Event('input',{bubbles:true}));
+ input.focus({preventScroll:true});
+}
+document.addEventListener('input',ev=>{
+ if(ev.target.matches('#search, #theologySearch, #faithTopicsSearch'))syncSearchClear(ev.target);
+});
+document.addEventListener('click',ev=>{
+ const clear=ev.target.closest('.search-clear[data-clear-for]');
+ if(clear)clearSearchInput(clear.dataset.clearFor);
+});
 let searchMatches=[],searchExpanded=false,searchSelection=-1;
 function renderSearchResults(){
   const query=search.value.trim();
@@ -705,6 +732,7 @@ search.addEventListener('keydown',ev=>{
 });
 function chooseSearch(id){
   search.value='';
+  syncSearchClear(search);
   searchMatches=[];
   searchExpanded=false;
   searchSelection=-1;
