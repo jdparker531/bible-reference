@@ -34,8 +34,8 @@ window.renderTheology=function(){
   const page='<section class="theology-page">'+
     '<div class="theology-header"><span class="eyebrow">A THEOLOGICAL READING COLLECTION</span><h1>Explore Theology</h1>'+
     '<p>40 influential Christian writings, from the early church to modern evangelical theology. Explore foundational doctrine, biblical interpretation, apologetics, and Christian living.</p>'+
-    '<div class="theology-context">Curated with a Protestant emphasis; includes historic ecumenical works and influential perspectives that Protestants debate. Rankings reflect lasting influence, not measured readership.</div></div>'+
-    '<div class="theology-toolbar"><label class="theology-search-label" for="theologySearch"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="theologySearch" type="search" placeholder="Search titles, authors, topics..." oninput="filterTheology()" autocomplete="off"></label>'+sel+
+    '</div>'+
+    '<div class="theology-toolbar"><div class="theology-search-label"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="theologySearch" type="search" placeholder="Search titles, authors, topics..." aria-label="Search theology writings" oninput="filterTheology()" autocomplete="off"><button type="button" class="search-clear" hidden aria-label="Clear theology search" title="Clear search" data-clear-for="theologySearch">×</button></div>'+sel+
     '<span class="theology-count" id="theologyCount">40 of 40 writings</span></div>'+
     '<div class="theology-entries" id="theologyEntries">'+WRITINGS.map(articleCard).join("")+'</div>'+
     '<p class="theology-footer">External links open in a new tab. Most lead to full texts; where a complete free text is unavailable, the link is clearly labeled as a publisher preview, overview, or access page. Publication dates for ancient and medieval works are approximate.</p></section>';
