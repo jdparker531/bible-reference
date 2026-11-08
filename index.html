@@ -740,7 +740,7 @@ function chooseSearch(id){
   navigate('book',id);
 }
 document.addEventListener('click',ev=>{if(!ev.target.closest('.search-wrap'))results.classList.remove('show');if(ev.target===$('overlay'))closeDrawer()});document.addEventListener('keydown',ev=>{if(ev.key==='Escape'){closeDrawer();results.classList.remove('show');closeMenu()}if(ev.key==='Tab'&&$('overlay').classList.contains('open')){let focusables=$('overlay').querySelectorAll('button:not(:disabled),a[href]');if(focusables.length){let first=focusables[0],last=focusables[focusables.length-1];if(ev.shiftKey&&document.activeElement===first){last.focus();ev.preventDefault()}else if(!ev.shiftKey&&document.activeElement===last){first.focus();ev.preventDefault()}}}});
-window.addEventListener('hashchange',route);route();
+window.addEventListener('hashchange',route);window.addEventListener('DOMContentLoaded',route);
 </script><script>// Bible Overview — curated 66-book outlines, videos and five-era timelines.
 (function(){
 "use strict";
